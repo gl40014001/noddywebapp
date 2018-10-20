@@ -20,38 +20,32 @@ namespace noddywebapp
     }
 
 
+
+
     public class IPNetworking
     {
         public static string GetIP4Address()
         {
-            string IP4Address = String.Empty;
+           // IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName()); // `Dns.Resolve()` method is deprecated.
+            //IPAddress ipAddress = ipHostInfo.AddressList[2];
 
-            foreach (IPAddress IPA in Dns.GetHostAddresses(HttpContext.Current.Request.UserHostAddress))
+
+            string myHost = System.Net.Dns.GetHostName();
+            string myIP = null;
+
+            for (int i = 0; i <= System.Net.Dns.GetHostEntry(myHost).AddressList.Length - 1; i++)
             {
-                if (IPA.AddressFamily.ToString() == "InterNetwork")
+                if (System.Net.Dns.GetHostEntry(myHost).AddressList[i].IsIPv6Teredo == false)
                 {
-                    IP4Address = IPA.ToString();
-                    break;
+                   // myIP = System.Net.Dns.GetHostEntry(myHost).AddressList[i].ToString();
+                    IPAddress thing = System.Net.Dns.GetHostEntry(myHost).AddressList[i].MapToIPv4();
+                    myIP = thing.ToString();
+
                 }
             }
 
-            if (IP4Address != String.Empty)
-            {
-                return IP4Address;
-            }
-
-            foreach (IPAddress IPA in Dns.GetHostAddresses(Dns.GetHostName()))
-            {
-                if (IPA.AddressFamily.ToString() == "InterNetwork")
-                {
-                    IP4Address = IPA.ToString();
-                    break;
-                }
-            }
-
-            return IP4Address;
+            return myIP;
         }
     }
-
 
 }
